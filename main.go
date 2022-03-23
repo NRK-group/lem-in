@@ -1,82 +1,68 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"lemin/function"
+	"strconv"
+)
 
 type Graph struct {
-	nodes []*GraphNode
+	Vertices []*Vertex
+}
+type Vertex struct {
+	// Key      int
+	Name     string
+	X        int
+	Y        int
+	Status   string
+	Adjacent []*Vertex
 }
 
-type GraphNode struct {
-	id    int
-	x     int
-	y     int
-	edges map[int]int
+func (g *Graph) AddVertex(name string, x, y int) {
+	g.Vertices = append(g.Vertices,
+		&Vertex{
+			// Key:  k,
+			Name: name,
+			X:    x,
+			Y:    y,
+		})
 }
-
-func New() *Graph {
+func NewGraph() *Graph {
 	return &Graph{
-		nodes: []*GraphNode{},
+		Vertices: []*Vertex{},
 	}
 }
-func (g *Graph) AddNode() (id int) {
-	id = len(g.nodes)
-	g.nodes = append(g.nodes, &GraphNode{
-		id:    id,
-		edges: make(map[int]int),
-	})
-	return
-}
-
-func (g *Graph) AddEdge(n1, n2 int, w int) {
-	g.nodes[n1].edges[n2] = w
-}
-
-func (g *Graph) Neighbors(id int) []int {
-	neighbors := []int{}
-	for _, node := range g.nodes {
-		for edge := range node.edges {
-			if node.id == id {
-				neighbors = append(neighbors, edge)
-			}
-			if edge == id {
-				neighbors = append(neighbors, node.id)
-			}
+func Contains(s []*Vertex, room string) bool {
+	for _, v := range s {
+		if room == v.Name {
+			return true
 		}
 	}
-	return neighbors
+	return false
 }
-func (g *Graph) Nodes() []int {
-	nodes := make([]int, len(g.nodes))
-	for i := range g.nodes {
-		nodes[i] = i
+func (g *Graph) Populate(file string) {
+	a, f := function.ValidateFile(file)
+	if !(a) {
+		fmt.Println(f[0]) // this will print an error message
+		return
 	}
-	return nodes
-}
-func (g *Graph) Edges() [][3]int {
-	edges := make([][3]int, 0, len(g.nodes))
-	for i := 0; i < len(g.nodes); i++ {
-		for k, v := range g.nodes[i].edges {
-			edges = append(edges, [3]int{i, k, int(v)})
-		}
+	_, _, _, coordinates, _ := function.Clean(f)
+	// grph := NewGraph()
+	for i := 0; i < len(coordinates); i++ {
+		room := coordinates[i][0]
+		x, _ := strconv.Atoi(coordinates[i][1])
+		y, _ := strconv.Atoi(coordinates[i][2])
+		g.AddVertex(room, x, y)
 	}
-	return edges
+	// fmt.Println(ants, start, end, coordinates, links)
+	for i := range coordinates {
+		fmt.Println(g.Vertices[i])
+		// fmt.Print(grph.Vertices[1])
+	}
 }
 func main() {
-	a := New()
-	a.AddNode()
-	a.AddNode()
-	a.AddNode()
-	a.AddNode()
-	a.AddNode()
-	a.AddEdge(0, 1, 3)
-	a.AddEdge(0, 2, 7)
-	a.AddEdge(2, 4, 7)
-	a.AddEdge(4, 1, 7)
-	a.AddEdge(2, 4, 7)
-	fmt.Println(a.Nodes())
-	fmt.Println(a.Neighbors(0))
-	fmt.Print(a.Neighbors(1))
-	fmt.Println(a.Neighbors(2))
-	fmt.Println(a.Neighbors(3))
-	fmt.Println(a.Edges())
+	path := "example/"
+	s := []string{"example00.txt", "example01.txt", "example02.txt", "example03.txt", "example04.txt", "example05.txt", "example06.txt", "example07.txt", "example08.txt", "example09.txt", "example10.txt", "badexample00.txt", "badexample01.txt"}
+	g := NewGraph()
+	g.Populate(path + s[10])
 }

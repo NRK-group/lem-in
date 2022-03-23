@@ -45,7 +45,7 @@ func TestDistance(t *testing.T) {
 }
 func TestValidateFile(t *testing.T) {
 	s := []string{"example00.txt", "example01.txt", "example02.txt", "example03.txt", "example04.txt", "example05.txt", "example06.txt", "example07.txt", "example08.txt", "example09.txt", "example10.txt", "badexample00.txt", "badexample01.txt"}
-	f := []bool{true, true, true, true, true, true, true, true, false, false, false, false, false}
+	f := []bool{true, true, true, true, true, true, true, true, false, false, false, false, false} // the badexample01.txt haven't take into consideration yet
 	for i := range s {
 		got, _ := function.ValidateFile("example/" + s[i])
 		want := f[i]
