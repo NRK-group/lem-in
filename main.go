@@ -10,13 +10,11 @@ type Graph struct {
 	Vertices map[string]*Vertex
 }
 type Vertex struct {
-	// Key      int
 	Name     string
 	X        int
 	Y        int
 	Status   string
 	Adjacent map[string]*Vertex
-	// Adjacent []*Vertex
 }
 
 func Contains(s map[string]*Vertex, room string) bool { // check that their is no duplicate room name
@@ -29,14 +27,6 @@ func Contains(s map[string]*Vertex, room string) bool { // check that their is n
 }
 func (g *Graph) AddVertex(name string, x, y int) { // Add vertex
 	if !(Contains(g.Vertices, name)) {
-		// g.Vertices = append(g.Vertices,
-		// 	&Vertex{
-		// 		// Key:  k,
-		// 		Name:     name,
-		// 		X:        x,
-		// 		Y:        y,
-		// 		Adjacent: make(map[string]*Vertex),
-		// 	})
 		g.Vertices[name] = &Vertex{
 			Name:     name,
 			X:        x,
@@ -49,13 +39,7 @@ func (g *Graph) AddVertex(name string, x, y int) { // Add vertex
 func (g *Graph) AddEdge(from, to string) {
 	fromVertex := g.GetVertex(from)
 	toVertex := g.GetVertex(to)
-	if fromVertex == nil && toVertex == nil {
-		// return
-		fmt.Println("HELLO")
-	} else {
-		fromVertex.Adjacent[toVertex.Name] = toVertex
-	}
-
+	fromVertex.Adjacent[toVertex.Name] = toVertex
 }
 func (g *Graph) GetVertex(room string) *Vertex {
 	for i, v := range g.Vertices {
@@ -78,30 +62,49 @@ func (g *Graph) Populate(file string) {
 		return
 	}
 	_, _, _, coordinates, links := function.Clean(f)
-	// grph := NewGraph()
-	for i := 0; i < len(coordinates); i++ {
+	for i := 0; i < len(coordinates); i++ { //add every vertex
 		room := coordinates[i][0]
 		x, _ := strconv.Atoi(coordinates[i][1])
 		y, _ := strconv.Atoi(coordinates[i][2])
 		g.AddVertex(room, x, y)
 	}
 	// fmt.Println(ants, start, end, coordinates, links)
-	for i := range links {
+	for i := range links { // add every connection
 		from := links[i][0]
 		to := links[i][1]
 		g.AddEdge(from, to)
 		g.AddEdge(to, from)
 	}
-	// for _, i := range coordinates {
-	// 	fmt.Println(g.Vertices[i[0]])
-	// 	// fmt.Print(grph.Vertices[1])
+	// if len(g.Vertices[start[0]].Adjacent) == 0 { // check if their is a path from start room
+	// 	fmt.Print("ERROR: invalid data format, graph incomplete")
+	// 	return
 	// }
-	// fmt.Println(g.Vertices[0].Adjacent[0].Name)
+	// if len(g.Vertices[end[0]].Adjacent) == 0 { // check if their is a path to the end room
+	// 	fmt.Print("ERROR: invalid data format, no path found to the end room")
+	// 	return
+	// }
+	// for _, i := range coordinates { // print every room
+	// 	fmt.Println(g.Vertices[i[0]])
+	// }
+}
+func Dfs(g *Graph, start string) {
+	fmt.Println(g.Vertices[start])
+	for _, n := range g.Vertices[start].Adjacent {
+		g.Vertices[start].Status = "visited"
+		if n.Status != "visited" {
+			Dfs(g, n.Name)
+			return
+		}
+	}
 }
 func main() {
 	path := "example/"
-	s := []string{"example00.txt", "example01.txt", "example02.txt", "example03.txt", "example04.txt", "example05.txt", "example06.txt", "example07.txt", "example08.txt", "example09.txt", "example10.txt", "badexample00.txt", "badexample01.txt"}
+	s := []string{"example00.txt", "example01.txt", "example02.txt", "example03.txt", "example04.txt", "example05.txt", "example06.txt", "example07.txt", "example08.txt", "example09.txt", "example10.txt", "badexample00.txt", "badexample01.txt", "badexample03.txt"}
 	g := NewGraph()
+	// for i := range s {
 	g.Populate(path + s[5])
-	fmt.Print(g.Vertices["start"].Adjacent["A0"].Adjacent["A1"].Adjacent["A2"].Adjacent["end"])
+	// }
+	g.Vertices["end"].Adjacent = map[string]*Vertex{}
+	g.Vertices["start"].Status = "visited"
+	Dfs(g, "G0")
 }
