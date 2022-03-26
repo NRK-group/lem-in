@@ -61,7 +61,7 @@ func (g *Graph) Populate(file string) {
 		fmt.Println(f[0]) // this will print an error message
 		return
 	}
-	_, _, _, coordinates, links := function.Clean(f)
+	_, _, end, coordinates, links := function.Clean(f)
 	for i := 0; i < len(coordinates); i++ { //add every vertex
 		room := coordinates[i][0]
 		x, _ := strconv.Atoi(coordinates[i][1])
@@ -69,9 +69,13 @@ func (g *Graph) Populate(file string) {
 		g.AddVertex(room, x, y)
 	}
 	// fmt.Println(ants, start, end, coordinates, links)
+	//fmt.Println(end)
 	for i := range links { // add every connection
 		from := links[i][0]
 		to := links[i][1]
+		if to == end[0] {
+			g.Vertices[from].Status = "nextE" // Set all the rooms before end to know went to finish
+		}
 		g.AddEdge(from, to)
 		g.AddEdge(to, from)
 	}
@@ -90,10 +94,16 @@ func (g *Graph) Populate(file string) {
 func Dfs(g *Graph, start string) {
 	fmt.Println(g.Vertices[start])
 	for _, n := range g.Vertices[start].Adjacent {
-		g.Vertices[start].Status = "visited"
 		if n.Status != "visited" {
+			if n.Status == "nextE" {  // Find the room before the end
+				n.Status = "visited"
+				fmt.Println(n)
+				fmt.Println(g.Vertices["end"])
+			}else{
+			n.Status = "visited"
 			Dfs(g, n.Name)
 			return
+			}
 		}
 	}
 }
@@ -106,5 +116,8 @@ func main() {
 	// }
 	g.Vertices["end"].Adjacent = map[string]*Vertex{}
 	g.Vertices["start"].Status = "visited"
-	Dfs(g, "G0")
+	Dfs(g, "start")
+
+	
+	
 }
