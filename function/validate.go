@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+//This fucntion validate the file.
+//It checks if the file is not empty, the number of ants is valid, and
+//the file has start and end points.
+//It will return true and the content of the file in an array if the file is formatted correctly and
+// return false and an error message for invalid file.
 func ValidateFile(file string) (bool, []string) {
 	s, _ := os.Open(file)
 	f, _ := ioutil.ReadAll(s)
@@ -26,13 +31,25 @@ func ValidateFile(file string) (bool, []string) {
 	}
 	return true, splitF
 }
-func Clean(args []string) (int, []string, []string, [][]string, [][]string) {
+
+type Info struct {
+	NumAnts int
+	Start   string
+	End     string
+}
+
+// This function receive a txt file and return a stuct and two 2d slice.
+// The stuct "*Info" consist of number of ants, starting and ending points = info.
+// Each slice inside the slice of the first 2d array are consist of ["room name", "x", "y"] = coordinates.
+// Each slice inside the slice of the second 2d array are consist of ["room name", "room name"] = links.
+func Clean(args []string) (*Info, [][]string, [][]string) {
 	ants := args[0]             // get the number of ants
 	s := ""                     // get the start values
 	e := ""                     // get the end values
 	coordinates := [][]string{} //store all the coordinates
 	links := [][]string{}       // store all the links
 	data := args[1:]            // exclude the number of ants
+
 	for i, w := range data {
 		if w == "##start" { // look for the starting coordinates
 			s = data[i+1] // store the start value
@@ -50,6 +67,7 @@ func Clean(args []string) (int, []string, []string, [][]string, [][]string) {
 			}
 		}
 	}
+
 	for _, w := range data {
 		if w != "" { // exclude the empty
 			if strings.Contains(w, " ") { // look for the coordinates
@@ -61,8 +79,17 @@ func Clean(args []string) (int, []string, []string, [][]string, [][]string) {
 			}
 		}
 	}
+
 	antNum, _ := strconv.Atoi(ants)
 	start := strings.Split(s, " ")
 	end := strings.Split(e, " ")
-	return antNum, start, end, coordinates, links
+
+	// populate the info struct
+	info := &Info{
+		NumAnts: antNum,
+		Start:   start[0],
+		End:     end[0],
+	}
+
+	return info, coordinates, links
 }
