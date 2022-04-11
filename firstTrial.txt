@@ -1,0 +1,86 @@
+This the result of the frist trial
+Only example 4 and 5 is not working 
+&{4 0 1 [[0 0 3] [2 2 5] [3 4 0] [1 8 3]] [[0 2] [2 3] [3 1]]}&{4 0 1 [[0 0 3] [2 2 5] [3 4 0] [1 8 3]] [[0 2] [2 3] [3 1]]}
+
+Room 1 :  3 
+Room 0 :  2 
+Room 2 :  0  3 
+Room 3 :  2  1 
+[[0 2 3 1]]
+
+&{10 start end [[start 1 6] [0 4 8] [o 6 8] [n 6 6] [e 8 4] [t 1 9] [E 5 9] [a 8 9] [m 8 6] [h 4 6] [A 5 2] [c 8 1] [k 11 2] [end 11 6]] [[start t] [n e] [a m] [A c] [0 o] [E a] [k end] [start h] [o n] [m end] [t E] [start 0] [h A] [e end] [c k] [n m] [h n]]}&{10 start end [[start 1 6] [0 4 8] [o 6 8] [n 6 6] [e 8 4] [t 1 9] [E 5 9] [a 8 9] [m 8 6] [h 4 6] [A 5 2] [c 8 1] [k 11 2] [end 11 6]] [[start t] [n e] [a m] [A c] [0 o] [E a] [k end] [start h] [o n] [m end] [t E] [start 0] [h A] [e end] [c k] [n m] [h n]]}
+
+Room 0 :  o  start 
+Room e :  n  end 
+Room E :  a  t 
+Room start :  t  h  0 
+Room o :  0  n 
+Room n :  e  o  m  h 
+Room m :  a  end  n 
+Room A :  c  h 
+Room end :  k  m  e 
+Room t :  start  E 
+Room h :  start  A  n 
+Room c :  A  k 
+Room a :  m  E 
+Room k :  end  c 
+[[start t E a m end] [start h A c k end] [start 0 o n e end]]
+
+&{20 0 3 [[0 2 0] [1 4 1] [2 6 0] [3 5 3]] [[0 1] [0 3] [1 2] [3 2]]}&{20 0 3 [[0 2 0] [1 4 1] [2 6 0] [3 5 3]] [[0 1] [0 3] [1 2] [3 2]]}
+
+Room 0 :  1  3 
+Room 1 :  0  2 
+Room 2 :  1  3 
+Room 3 :  0  2 
+[[0 1 2 3] [0 3]]
+
+&{4 0 5 [[4 5 4] [0 1 4] [1 3 6] [5 6 4] [2 3 4] [3 3 1]] [[0 1] [2 4] [1 4] [0 2] [4 5] [3 0] [4 3]]}&{4 0 5 [[4 5 4] [0 1 4] [1 3 6] [5 6 4] [2 3 4] [3 3 1]] [[0 1] [2 4] [1 4] [0 2] [4 5] [3 0] [4 3]]}
+
+Room 1 :  0  4 
+Room 5 :  4 
+Room 2 :  4  0 
+Room 3 :  0  4 
+Room 4 :  2  1  5  3 
+Room 0 :  1  2  3 
+[[0 1 4 5] [] []]
+
+&{9 richard peter [[richard 0 6] [gilfoyle 6 3] [erlich 9 6] [dinish 6 9] [jimYoung 11 7] [peter 14 6]] [[richard dinish] [dinish jimYoung] [richard gilfoyle] [gilfoyle peter] [gilfoyle erlich] [richard erlich] [erlich jimYoung] [jimYoung peter]]}&{9 richard peter [[richard 0 6] [gilfoyle 6 3] [erlich 9 6] [dinish 6 9] [jimYoung 11 7] [peter 14 6]] [[richard dinish] [dinish jimYoung] [richard gilfoyle] [gilfoyle peter] [gilfoyle erlich] [richard erlich] [erlich jimYoung] [jimYoung peter]]}
+
+Room jimYoung :  dinish  erlich  peter 
+Room peter :  gilfoyle  jimYoung 
+Room richard :  dinish  gilfoyle  erlich 
+Room gilfoyle :  richard  peter  erlich 
+Room erlich :  gilfoyle  richard  jimYoung 
+Room dinish :  richard  jimYoung 
+[[richard dinish jimYoung erlich gilfoyle peter] [] []]
+
+&{9 start end [[start 0 3] [end 10 1] [C0 1 0] [C1 2 0] [C2 3 0] [C3 4 0] [I4 5 0] [I5 6 0] [A0 1 2] [A1 2 1] [A2 4 1] [B0 1 4] [B1 2 4] [E2 6 4] [D1 6 3] [D2 7 3] [D3 8 3] [H4 4 2] [H3 5 2] [F2 6 2] [F3 7 2] [F4 8 2] [G0 1 5] [G1 2 5] [G2 3 5] [G3 4 5] [G4 6 5]] [[H3 F2] [H3 H4] [H4 A2] [start G0] [G0 G1] [G1 G2] [G2 G3] [G3 G4] [G4 D3] [start A0] [A0 A1] [A0 D1] [A1 A2] [A1 B1] [A2 end] [A2 C3] [start B0] [B0 B1] [B1 E2] [start C0] [C0 C1] [C1 C2] [C2 C3] [C3 I4] [D1 D2] [D1 F2] [D2 E2] [D2 D3] [D2 F3] [D3 end] [F2 F3] [F3 F4] [F4 end] [I4 I5] [I5 end]]}&{9 start end [[start 0 3] [end 10 1] [C0 1 0] [C1 2 0] [C2 3 0] [C3 4 0] [I4 5 0] [I5 6 0] [A0 1 2] [A1 2 1] [A2 4 1] [B0 1 4] [B1 2 4] [E2 6 4] [D1 6 3] [D2 7 3] [D3 8 3] [H4 4 2] [H3 5 2] [F2 6 2] [F3 7 2] [F4 8 2] [G0 1 5] [G1 2 5] [G2 3 5] [G3 4 5] [G4 6 5]] [[H3 F2] [H3 H4] [H4 A2] [start G0] [G0 G1] [G1 G2] [G2 G3] [G3 G4] [G4 D3] [start A0] [A0 A1] [A0 D1] [A1 A2] [A1 B1] [A2 end] [A2 C3] [start B0] [B0 B1] [B1 E2] [start C0] [C0 C1] [C1 C2] [C2 C3] [C3 I4] [D1 D2] [D1 F2] [D2 E2] [D2 D3] [D2 F3] [D3 end] [F2 F3] [F3 F4] [F4 end] [I4 I5] [I5 end]]}
+
+Room C1 :  C0  C2 
+Room start :  G0  A0  B0  C0 
+Room end :  A2  D3  F4  I5 
+Room F3 :  D2  F2  F4 
+Room C2 :  C1  C3 
+Room A0 :  start  A1  D1 
+Room F2 :  H3  D1  F3 
+Room I4 :  C3  I5 
+Room A1 :  A0  A2  B1 
+Room A2 :  H4  A1  end  C3 
+Room E2 :  B1  D2 
+Room G1 :  G0  G2 
+Room G4 :  G3  D3 
+Room C0 :  start  C1 
+Room C3 :  A2  C2  I4 
+Room H3 :  F2  H4 
+Room G3 :  G2  G4 
+Room I5 :  I4  end 
+Room B0 :  start  B1 
+Room H4 :  H3  A2 
+Room F4 :  F3  end 
+Room D3 :  G4  D2  end 
+Room G0 :  start  G1 
+Room B1 :  A1  B0  E2 
+Room D1 :  A0  D2  F2 
+Room D2 :  D1  E2  D3  F3 
+Room G2 :  G1  G3 
+[[start G0 G1 G2 G3 G4 D3 D2 D1 A0 A1 A2 H4 H3 F2 F3 F4 end] [start C0 C1 C2 C3 I4 I5 end] [] []]

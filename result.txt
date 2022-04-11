@@ -1,17 +1,16 @@
-&{G0 1 5  map[G1:0xc000026640 start:0xc000026080]}
-&{G1 2 5  map[G0:0xc000026600 G2:0xc000026680]}
-&{G2 3 5  map[G1:0xc000026640 G3:0xc0000266c0]}
-&{G3 4 5  map[G2:0xc000026680 G4:0xc000026700]}
-&{G4 6 5  map[D3:0xc000026480 G3:0xc0000266c0]}
-&{D3 8 3  map[D2:0xc000026440 G4:0xc000026700 end:0xc0000260c0]}
-&{D2 7 3  map[D1:0xc000026400 D3:0xc000026480 E2:0xc0000263c0 F3:0xc000026580]}
-&{D1 6 3  map[A0:0xc000026280 D2:0xc000026440 F2:0xc000026540]}
-&{A0 1 2  map[A1:0xc0000262c0 D1:0xc000026400 start:0xc000026080]}
-&{A1 2 1  map[A0:0xc000026280 A2:0xc000026300 B1:0xc000026380]}
-&{A2 4 1  map[A1:0xc0000262c0 C3:0xc0000261c0 H4:0xc0000264c0 end:0xc0000260c0]}
-&{H4 4 2  map[A2:0xc000026300 H3:0xc000026500]}
-&{H3 5 2  map[F2:0xc000026540 H4:0xc0000264c0]}
-&{F2 6 2  map[D1:0xc000026400 F3:0xc000026580 H3:0xc000026500]}
-&{F3 7 2  map[D2:0xc000026440 F2:0xc000026540 F4:0xc0000265c0]}
-&{F4 8 2  map[F3:0xc000026580 end:0xc0000260c0]}
-&{end 10 1  map[]}
+Result
+example00.txt [[0->2->3-1]] -> working
+example01.txt [[start->t->E->a->m->end][start->h->A->c->k->end][start->0->o->n->e->]] - working
+example02.txt [[0->1->2->3] [0->3]] -> working
+example03.txt [[0->1->4->5]] -> working
+example04.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> not working
+example05.txt [[start -> A0 -> A1 -> A2 -> end] [start -> B0 -> B1 -> E2 -> D2 -> F3 -> F4] [start -> G0 -> G1 -> G2 -> G3 -> G4 -> D3 -> end] [start -> C0 -> C1 -> C2 -> C3 -> I4 -> I5 -> end]] -> not working
+example06.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> not working
+example07.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> not working
+example08.txt [[1 -> 2 -> 4 -> 0][1 -> 3 -> 5 -> 6 ->0]] -> not working 
+badexample00.txt -> ERROR: invalid data format, invalid number of Ants
+badexample01.txt -> ERROR: invalid data format, no path found
+badexample02.txt -> ERROR: invalid data format, no end room found
+badexample03.txt -> ERROR: invalid data format, no path found
+badexample04.txt -> ERROR: invalid data format, empty file
+badexample05.txt -> ERROR: invalid data format, no start room found
