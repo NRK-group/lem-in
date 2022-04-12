@@ -53,6 +53,16 @@ func (g *Graph) PrintGraph() {
 	fmt.Println()
 }
 
+//RoomNameList is a method of the graph that return an array
+//of room name from the graph
+func (g *Graph) RoomNameList() []string {
+	temp := []string{}
+	for i := range g.Rooms {
+		temp = append(temp, i)
+	}
+	return temp
+}
+
 //NewGraph is a function that initialise a new
 //graph by creating an empty room.
 func NewGraph() *Graph {
@@ -106,7 +116,7 @@ func (g *Graph) MakeVisited(start, end string, path Array, make bool) {
 	}
 }
 
-//Array is an slices of slices.
+//Array is an slices of string.
 //Initialize a global slice to create a method into it.
 type Array []string
 
@@ -123,6 +133,7 @@ func (arr Array) HasPropertyOf(str string) bool {
 	return false
 }
 
+//FindPath is a method of the *Graph struct that find paths from the start to end.
 func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 	if _, exist := g.Rooms[start]; !exist {
 		return path
@@ -134,19 +145,23 @@ func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 	shortest := make(Array, 0)
 	var newPath Array
 	for _, node := range g.Rooms[start].Links {
+		//the if statement below checks if the current node is not visited \
+		// and if the current path dont have the same room
 		if !(g.IsVisited(node.Name)) && !path.HasPropertyOf(node.Name) {
-			newPath = g.FindPath(node.Name, end, path, swtch)
-			// fmt.Println(newPath)
+			newPath = g.FindPath(node.Name, end, path, swtch) //recursion
 			if len(newPath) > 0 {
+				//if the swtch is true it will find the shortest path in the graph
 				if swtch {
-					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) { //example04.txt && example05.txt is not working with this code
-						if len(shortest) == 0 || (len(newPath) < len(shortest)) { //example04.txt && example05.txt is working with this code
+					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) {
+						if len(shortest) == 0 || (len(newPath) < len(shortest)) {
 							shortest = newPath
 						}
 					}
 				}
+
+				//if the switch is false it will return the first path it's finds
 				if !(swtch) {
-					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) { //example04.txt && example05.txt is not working with this code
+					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) {
 						return newPath
 					}
 				}
@@ -154,31 +169,27 @@ func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 			}
 		}
 	}
-	return shortest
+	return shortest //this will be returned if the swtch is true
 }
 
-//RoomNameList is a method of the graph that return an array
-//of room name from the graph
-func (g *Graph) RoomNameList() []string {
-	temp := []string{}
-	for i := range g.Rooms {
-		temp = append(temp, i)
-	}
-	return temp
-}
-
+//PathList is a method of the *Graph struct that return a slice of slices of paths
 func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 	AntsPaths := [][]string{} //container for the paths
 	var p Array               //init p for the parameter of the ShortestPath method
 	var path Array            // container for the shortest path
 	cnt := 0
 	c := 0
+
+	//the for loop below will loop until cnt is not equal to the length of the adjacent list of the start room
 	for cnt != len(g.Rooms[start].Links) {
 		path = g.FindPath(start, end, p, swtch) //look for the path
 		if len(path) != 0 {
 			if len(AntsPaths) == 0 {
 				AntsPaths = append(AntsPaths, path)
 			} else if len(AntsPaths[cnt-1]) == len(path) {
+				//if the current path and the previous path have the same length
+				//checks if the path is not similar to the previous paths
+				//if it is not similar append the path into the AntsPaths
 				for i := 0; i < len(path); i++ {
 					if AntsPaths[cnt-1][i] == path[i] {
 						c++
@@ -191,43 +202,33 @@ func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 				AntsPaths = append(AntsPaths, path)
 			}
 		}
-		g.MakeVisited(start, end, path, true)
+		g.MakeVisited(start, end, path, true) // make the paths visiteds
 		cnt++
 	}
-
-	return SortPaths(AntsPaths)
+	return AntsPaths
 }
 
-func SortPaths(path [][]string) [][]string {
-	for i := range path {
-		for j := range path {
-			if len(path[i]) < len(path[j]) {
-				path[i], path[j] = path[j], path[i]
-			}
-		}
-	}
-	return path
-}
-
+//ComparePaths is a function that receives two slices of slice of paths and compare which one is the
+//best path to use. This function will return the best paths to use in asceding order based on path length
 func ComparePaths(AntsPaths, AntsPaths2 [][]string) [][]string {
+	//this function will check which one had more paths and return it
 	if len(AntsPaths) > len(AntsPaths2) {
 		return AntsPaths
 	} else if len(AntsPaths) < len(AntsPaths2) {
-		return AntsPaths2
+		return function.SortPaths(AntsPaths2)
 	} else {
+		//if length of both slices of slice of path is equal to each order it will check which one had the
+		//less room inside the slices of slice of path and return it
 		antp1 := 0
 		antp2 := 0
 		for _, paths := range AntsPaths {
 			antp1 = antp1 + len(paths)
-		}
-		for _, paths := range AntsPaths2 {
 			antp2 = antp2 + len(paths)
 		}
-
 		if antp1 < antp2 {
-			return AntsPaths
+			return function.SortPaths(AntsPaths)
 		} else {
-			return AntsPaths2
+			return function.SortPaths(AntsPaths2)
 		}
 	}
 }
