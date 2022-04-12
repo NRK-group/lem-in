@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"lemin/function"
 	"os"
 	"strconv"
@@ -97,10 +98,10 @@ func (g *Graph) IsVisited(name string) bool {
 }
 
 //MakeVisited is a *Graph struct method that make the path visited in the graph
-func (g *Graph) MakeVisited(start, end string, path Array) {
+func (g *Graph) MakeVisited(start, end string, path Array, make bool) {
 	for _, name := range path {
 		if start != name && end != name {
-			g.Rooms[name].Visited = true
+			g.Rooms[name].Visited = make
 		}
 	}
 }
@@ -122,7 +123,7 @@ func (arr Array) HasPropertyOf(str string) bool {
 	return false
 }
 
-func (g *Graph) ShortestPath(start, end string, path Array) []string {
+func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 	if _, exist := g.Rooms[start]; !exist {
 		return path
 	}
@@ -134,15 +135,20 @@ func (g *Graph) ShortestPath(start, end string, path Array) []string {
 	var newPath Array
 	for _, node := range g.Rooms[start].Links {
 		if !(g.IsVisited(node.Name)) && !path.HasPropertyOf(node.Name) {
-			newPath = g.ShortestPath(node.Name, end, path)
+			newPath = g.FindPath(node.Name, end, path, swtch)
 			// fmt.Println(newPath)
 			if len(newPath) > 0 {
-				if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) { //example04.txt && example05.txt is not working with this code
-					if len(shortest) == 0 || (len(newPath) < len(shortest)) { //example04.txt && example05.txt is working with this code
-						shortest = newPath
-						// fmt.Println(newPath, shortest)
+				if swtch {
+					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) { //example04.txt && example05.txt is not working with this code
+						if len(shortest) == 0 || (len(newPath) < len(shortest)) { //example04.txt && example05.txt is working with this code
+							shortest = newPath
+						}
 					}
-					// return newPath
+				}
+				if !(swtch) {
+					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) { //example04.txt && example05.txt is not working with this code
+						return newPath
+					}
 				}
 
 			}
@@ -151,26 +157,90 @@ func (g *Graph) ShortestPath(start, end string, path Array) []string {
 	return shortest
 }
 
-func main() {
-	FilePath := os.Args[1]
-	ok, file := function.ValidateFile(FilePath) // validation
-	if !(ok) {                                  //checks if the file is valid
-		fmt.Println(file[0])
-		return
+//RoomNameList is a method of the graph that return an array
+//of room name from the graph
+func (g *Graph) RoomNameList() []string {
+	temp := []string{}
+	for i := range g.Rooms {
+		temp = append(temp, i)
 	}
-	FarmInfo := function.CleanData(file) //assign the
-	// fmt.Println(FarmInfo)
-	lemin := NewGraph()      //init lemin as a empty graph
-	lemin.Populate(FarmInfo) // populate the lemin using the Populate method
-	// fmt.Println(lemin)
-	lemin.PrintGraph()
+	return temp
+}
+
+func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 	AntsPaths := [][]string{} //container for the paths
 	var p Array               //init p for the parameter of the ShortestPath method
 	var path Array            // container for the shortest path
-	for len(AntsPaths) != len(lemin.Rooms[FarmInfo.Start].Links) {
-		path = lemin.ShortestPath(FarmInfo.Start, FarmInfo.End, p) //look for the path
-		AntsPaths = append(AntsPaths, path)
-		lemin.MakeVisited(FarmInfo.Start, FarmInfo.End, path)
+	cnt := 0
+	c := 0
+	for cnt != len(g.Rooms[start].Links) {
+		path = g.FindPath(start, end, p, swtch) //look for the path
+		if len(path) != 0 {
+			if len(AntsPaths) == 0 {
+				AntsPaths = append(AntsPaths, path)
+			} else if len(AntsPaths[cnt-1]) == len(path) {
+				for i := 0; i < len(path); i++ {
+					if AntsPaths[cnt-1][i] == path[i] {
+						c++
+					}
+				}
+				if c != len(path) {
+					AntsPaths = append(AntsPaths, path)
+				}
+			} else {
+				AntsPaths = append(AntsPaths, path)
+			}
+		}
+		g.MakeVisited(start, end, path, true)
+		cnt++
 	}
-	fmt.Print(AntsPaths)
+	return AntsPaths
+}
+
+func ComparePaths(AntsPaths, AntsPaths2 [][]string) [][]string {
+	if len(AntsPaths) > len(AntsPaths2) {
+		return AntsPaths
+	} else if len(AntsPaths) < len(AntsPaths2) {
+		return AntsPaths2
+	} else {
+		antp1 := 0
+		antp2 := 0
+		for _, paths := range AntsPaths {
+			antp1 = antp1 + len(paths)
+		}
+		for _, paths := range AntsPaths2 {
+			antp2 = antp2 + len(paths)
+		}
+
+		if antp1 < antp2 {
+			return AntsPaths
+		} else {
+			return AntsPaths2
+		}
+	}
+}
+func main() {
+	FilePath := os.Args[1]
+	s, _ := os.Open(FilePath)            // open the file
+	f, _ := ioutil.ReadAll(s)            // read the file
+	ok, file := function.ValidateFile(f) // validation
+	if !(ok) {                           //checks if the file is valid
+		fmt.Println(file[0]) //error message
+		return
+	}
+	FarmInfo := function.CleanData(file) //assign the
+	lemin := NewGraph()                  //init lemin as a empty graph
+	lemin.Populate(FarmInfo)             // populate the lemin using the Populate method
+	// lemin.PrintGraph()
+	AntsPaths := lemin.PathList(FarmInfo.Start, FarmInfo.End, true)
+	lemin.MakeVisited(FarmInfo.Start, FarmInfo.End, lemin.RoomNameList(), false)
+	AntsPaths2 := lemin.PathList(FarmInfo.Start, FarmInfo.End, false)
+	a := ComparePaths(AntsPaths, AntsPaths2)
+	if len(a) == 0 {
+		fmt.Println("ERROR: invalid data format, no path found")
+		return
+	}
+	fmt.Println(string(f))
+	fmt.Println()
+	fmt.Println(a)
 }
