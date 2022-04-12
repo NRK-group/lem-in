@@ -194,7 +194,19 @@ func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 		g.MakeVisited(start, end, path, true)
 		cnt++
 	}
-	return AntsPaths
+
+	return SortPaths(AntsPaths)
+}
+
+func SortPaths(path [][]string) [][]string {
+	for i := range path {
+		for j := range path {
+			if len(path[i]) < len(path[j]) {
+				path[i], path[j] = path[j], path[i]
+			}
+		}
+	}
+	return path
 }
 
 func ComparePaths(AntsPaths, AntsPaths2 [][]string) [][]string {
@@ -219,6 +231,7 @@ func ComparePaths(AntsPaths, AntsPaths2 [][]string) [][]string {
 		}
 	}
 }
+
 func main() {
 	FilePath := os.Args[1]
 	s, _ := os.Open(FilePath)            // open the file
