@@ -133,17 +133,25 @@ func (arr Array) HasPropertyOf(str string) bool {
 	return false
 }
 
+
+
 //FindPath is a method of the *Graph struct that find paths from the start to end.
 func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
+
+	var newPath Array
+	shortest := make(Array, 0)
+
+
 	if _, exist := g.Rooms[start]; !exist {
 		return path
 	}
+
 	path = append(path, start)
 	if start == end {
 		return path
 	}
-	shortest := make(Array, 0)
-	var newPath Array
+	
+	
 	for _, node := range g.Rooms[start].Links {
 		//the if statement below checks if the current node is not visited \
 		// and if the current path dont have the same room
@@ -153,9 +161,14 @@ func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 				//if the swtch is true it will find the shortest path in the graph
 				if swtch {
 					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) {
-						if len(shortest) == 0 || (len(newPath) < len(shortest)) {
+						if len(shortest) == 0 {
 							shortest = newPath
 						}
+						if len(newPath) < len(shortest) {
+							shortest = newPath
+							//fmt.Println(shortest)
+						}
+
 					}
 				}
 
@@ -169,6 +182,7 @@ func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 			}
 		}
 	}
+
 	return shortest //this will be returned if the swtch is true
 }
 
@@ -179,6 +193,7 @@ func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 	var path Array            // container for the shortest path
 	cnt := 0
 	c := 0
+	
 
 	//the for loop below will loop until cnt is not equal to the length of the adjacent list of the start room
 	for cnt != len(g.Rooms[start].Links) {
@@ -232,6 +247,59 @@ func ComparePaths(AntsPaths, AntsPaths2 [][]string) [][]string {
 		}
 	}
 }
+func MoveAnts(n int, paths []string) []string {
+	result := []string{}
+	str := ""
+	antName := strconv.Itoa(n)
+	for _, room := range paths {
+		str = "L" + antName + "-" + room
+		result = append(result, str)
+		str = ""
+	}
+	return result
+}
+
+func Max(path [][][]string) int {
+	result := 0
+	maxlen := 0
+	pos := 0
+	if len(path) > 1 {
+		for i := range path {
+			for j := range path {
+				if len(path[i]) < len(path[j]) {
+					maxlen = len(path[j])
+					pos = j
+				}
+			}
+		}
+	} else {
+		maxlen = len(path[0])
+	}
+
+	lenOfP := len(path[pos][0])
+	result = (maxlen - 1) + (lenOfP)
+	return result
+}
+
+func PrintAntsMoves(container [][][]string, n int) string {
+	result := ""
+	antsMoves := make([][]string, n)
+	for _, c := range container {
+		for j, paths := range c {
+			for k, p := range paths {
+				// fmt.Println([]string{p}, i, j, j+k)
+				antsMoves[j+k] = append(antsMoves[j+k], p)
+			}
+		}
+	}
+	for _, a := range antsMoves {
+		for _, v := range a {
+			result += v + " "
+		}
+		result += "\n"
+	}
+	return result
+}
 
 func main() {
 	FilePath := os.Args[1]
@@ -256,5 +324,36 @@ func main() {
 	}
 	fmt.Println(string(f))
 	fmt.Println()
-	fmt.Println(a)
+	container := make([][][]string, len(a))
+	if len(a) > 1 {
+		cnt := 0
+		i := 1
+		for i != FarmInfo.NumAnts+1 {
+			if cnt == len(a)-1 {
+				cnt = 0
+			}
+			x := len(a[cnt]) + len(container[cnt])
+			y := len(a[cnt+1]) + len(container[cnt+1])
+			if !(x > y) {
+				container[cnt] = append(container[cnt], MoveAnts(i, a[cnt][1:]))
+			} else {
+				if cnt == len(a)-1 {
+					cnt = 0
+					container[0] = append(container[0], MoveAnts(i, a[0][1:]))
+				} else {
+					cnt++
+					container[cnt] = append(container[cnt], MoveAnts(i, a[cnt][1:]))
+				}
+			}
+			i++
+		}
+	} else {
+		i := 1
+		for i != FarmInfo.NumAnts+1 {
+			container[0] = append(container[0], MoveAnts(i, a[0][1:]))
+			i++
+		}
+	}
+	fmt.Print(PrintAntsMoves(container, Max(container)))
+	// fmt.Print(MoveAnts(1, []string{"A0", "A1", "A2", "end"}))
 }

@@ -1,8 +1,7 @@
 package function
 
 //SortPaths is function that sort the slice inside the slice base on their length.
-//This function will return the ordered paths. The algoriothms that used in this function
-//is bubble sort.
+//This function will return the ordered paths. The algoriothms that used in this function is bubble sort.
 func SortPaths(path [][]string) [][]string {
 	for i := range path {
 		for j := range path {
