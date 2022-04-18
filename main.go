@@ -247,6 +247,8 @@ func ComparePaths(AntsPaths, AntsPaths2 [][]string) [][]string {
 		}
 	}
 }
+
+//MoveAnts move ants to the end of the paths
 func MoveAnts(n int, paths []string) []string {
 	result := []string{}
 	str := ""
@@ -281,6 +283,7 @@ func Max(path [][][]string) int {
 	return result
 }
 
+//PrintAntsMoves prints out the moving ants
 func PrintAntsMoves(container [][][]string, n int) string {
 	result := ""
 	antsMoves := make([][]string, n)
@@ -300,6 +303,44 @@ func PrintAntsMoves(container [][][]string, n int) string {
 	}
 	return result
 }
+
+
+//PathsSeletion pick the correct amount of paths and the correct amount of ants for each paths
+func PathsSeletion(nAnts int, pahts [][]string) [][][]string {
+	container := make([][][]string, len(pahts))
+
+	if len(pahts) > 1 {
+		cnt := 0
+		i := 1
+		for i != nAnts+1 {
+			if cnt == len(pahts)-1 {
+				cnt = 0
+			}
+			x := len(pahts[cnt]) + len(container[cnt])
+			y := len(pahts[cnt+1]) + len(container[cnt+1])
+			if !(x > y) {
+				container[cnt] = append(container[cnt], MoveAnts(i, pahts[cnt][1:]))
+			} else {
+				if cnt == len(pahts)-1 {
+					cnt = 0
+					container[0] = append(container[0], MoveAnts(i, pahts[0][1:]))
+				} else {
+					cnt++
+					container[cnt] = append(container[cnt], MoveAnts(i, pahts[cnt][1:]))
+				}
+			}
+			i++
+		}
+	} else {
+		i := 1
+		for i != nAnts+1 {
+			container[0] = append(container[0], MoveAnts(i, pahts[0][1:]))
+			i++
+		}
+	}
+	return container
+}
+
 
 func main() {
 	FilePath := os.Args[1]
@@ -324,36 +365,7 @@ func main() {
 	}
 	fmt.Println(string(f))
 	fmt.Println()
-	container := make([][][]string, len(a))
-	if len(a) > 1 {
-		cnt := 0
-		i := 1
-		for i != FarmInfo.NumAnts+1 {
-			if cnt == len(a)-1 {
-				cnt = 0
-			}
-			x := len(a[cnt]) + len(container[cnt])
-			y := len(a[cnt+1]) + len(container[cnt+1])
-			if !(x > y) {
-				container[cnt] = append(container[cnt], MoveAnts(i, a[cnt][1:]))
-			} else {
-				if cnt == len(a)-1 {
-					cnt = 0
-					container[0] = append(container[0], MoveAnts(i, a[0][1:]))
-				} else {
-					cnt++
-					container[cnt] = append(container[cnt], MoveAnts(i, a[cnt][1:]))
-				}
-			}
-			i++
-		}
-	} else {
-		i := 1
-		for i != FarmInfo.NumAnts+1 {
-			container[0] = append(container[0], MoveAnts(i, a[0][1:]))
-			i++
-		}
-	}
+	container := PathsSeletion(FarmInfo.NumAnts, a)
 	fmt.Print(PrintAntsMoves(container, Max(container)))
 	// fmt.Print(MoveAnts(1, []string{"A0", "A1", "A2", "end"}))
 }
