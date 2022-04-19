@@ -21,6 +21,8 @@ type Room struct {
 	Links   []*Room
 }
 
+var pathArr2 = []string{}
+
 //AddRoom is a method of the Graph struct that will
 //receives name of the room, x coordinates and y coordinates
 //and append it to the &Room
@@ -141,7 +143,6 @@ func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 	var newPath Array
 	shortest := make(Array, 0)
 
-
 	if _, exist := g.Rooms[start]; !exist {
 		return path
 	}
@@ -161,6 +162,7 @@ func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 				//if the swtch is true it will find the shortest path in the graph
 				if swtch {
 					if newPath.HasPropertyOf(start) && newPath.HasPropertyOf(end) {
+						pathArr2 = append(pathArr2, fmt.Sprint(newPath))
 						if len(shortest) == 0 {
 							shortest = newPath
 						}
@@ -198,6 +200,11 @@ func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 	//the for loop below will loop until cnt is not equal to the length of the adjacent list of the start room
 	for cnt != len(g.Rooms[start].Links) {
 		path = g.FindPath(start, end, p, swtch) //look for the path
+		pathArr2 = function.SortStringPaths(pathArr2)
+		if len(pathArr2) > 1{
+		path = function.ConvertToArray(pathArr2[len(pathArr2)-1])
+		}
+		pathArr2 = []string{}
 		if len(path) != 0 {
 			if len(AntsPaths) == 0 {
 				AntsPaths = append(AntsPaths, path)
