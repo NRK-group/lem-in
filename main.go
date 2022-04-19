@@ -318,6 +318,42 @@ func PrintAntsMoves(container [][][]string, lenofMoves int) string {
 	return result
 }
 
+//PathsSeletion pick the correct amount of paths and the correct amount of ants for each paths
+func PathsSeletion(nAnts int, pahts [][]string) [][][]string {
+	container := make([][][]string, len(pahts))
+
+	if len(pahts) > 1 {
+		cnt := 0
+		i := 1
+		for i != nAnts+1 {
+			if cnt == len(pahts)-1 {
+				cnt = 0
+			}
+			x := len(pahts[cnt]) + len(container[cnt])
+			y := len(pahts[cnt+1]) + len(container[cnt+1])
+			if !(x > y) {
+				container[cnt] = append(container[cnt], MoveOfAnts(i, pahts[cnt][1:]))
+			} else {
+				if cnt == len(pahts)-1 {
+					cnt = 0
+					container[0] = append(container[0], MoveOfAnts(i, pahts[0][1:]))
+				} else {
+					cnt++
+					container[cnt] = append(container[cnt], MoveOfAnts(i, pahts[cnt][1:]))
+				}
+			}
+			i++
+		}
+	} else {
+		i := 1
+		for i != nAnts+1 {
+			container[0] = append(container[0], MoveOfAnts(i, pahts[0][1:]))
+			i++
+		}
+	}
+	return container
+}
+
 func main() {
 	FilePath := os.Args[1]
 	s, _ := os.Open(FilePath)            // open the file
@@ -341,35 +377,6 @@ func main() {
 	}
 	fmt.Println(string(f))
 	fmt.Println()
-	containerOfPaths := make([][][]string, len(a))
-	if len(a) > 1 {
-		cnt := 0
-		i := 1
-		for i != FarmInfo.NumAnts+1 {
-			if cnt == len(a)-1 {
-				cnt = 0
-			}
-			x := len(a[cnt]) + len(containerOfPaths[cnt])
-			y := len(a[cnt+1]) + len(containerOfPaths[cnt+1])
-			if !(x > y) {
-				containerOfPaths[cnt] = append(containerOfPaths[cnt], MoveOfAnts(i, a[cnt][1:]))
-			} else {
-				if cnt == len(a)-1 {
-					cnt = 0
-					containerOfPaths[0] = append(containerOfPaths[0], MoveOfAnts(i, a[0][1:]))
-				} else {
-					cnt++
-					containerOfPaths[cnt] = append(containerOfPaths[cnt], MoveOfAnts(i, a[cnt][1:]))
-				}
-			}
-			i++
-		}
-	} else {
-		i := 1
-		for i != FarmInfo.NumAnts+1 {
-			containerOfPaths[0] = append(containerOfPaths[0], MoveOfAnts(i, a[0][1:]))
-			i++
-		}
-	}
-	fmt.Print(PrintAntsMoves(containerOfPaths, LenOfMoves(containerOfPaths)))
+	container := PathsSeletion(FarmInfo.NumAnts, a)
+	fmt.Print(PrintAntsMoves(container, LenOfMoves(container)))
 }
