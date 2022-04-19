@@ -119,8 +119,10 @@ func (g *Graph) MakeVisited(start, end string, path Array, make bool) {
 }
 
 //Array is an slices of string.
-//Initialize a global slice to create a method into it.
+//Initialize a global slice to create a method into slice.
 type Array []string
+
+type DArray [][]string
 
 //HasPropertyOf is a method of Array that loops through the slice and
 //check if the slice contains the specific string.
@@ -135,11 +137,8 @@ func (arr Array) HasPropertyOf(str string) bool {
 	return false
 }
 
-
-
 //FindPath is a method of the *Graph struct that find paths from the start to end.
 func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
-
 	var newPath Array
 	shortest := make(Array, 0)
 
@@ -151,8 +150,7 @@ func (g *Graph) FindPath(start, end string, path Array, swtch bool) []string {
 	if start == end {
 		return path
 	}
-	
-	
+
 	for _, node := range g.Rooms[start].Links {
 		//the if statement below checks if the current node is not visited \
 		// and if the current path dont have the same room
@@ -195,7 +193,6 @@ func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 	var path Array            // container for the shortest path
 	cnt := 0
 	c := 0
-	
 
 	//the for loop below will loop until cnt is not equal to the length of the adjacent list of the start room
 	for cnt != len(g.Rooms[start].Links) {
@@ -255,11 +252,14 @@ func ComparePaths(AntsPaths, AntsPaths2 [][]string) [][]string {
 	}
 }
 
-//MoveAnts move ants to the end of the paths
-func MoveAnts(n int, paths []string) []string {
+//MoveOfAnts is function that will receive the name of the ant and the path that their taking and return a slice
+//that contains the ants movement. For example, the ant name is 1 and the path is [A0 A1 A2 end]
+//the result will be:
+//  [L1-A0 L1-A1 L1-A2 L1-end]
+func MoveOfAnts(nameOfAnt int, paths []string) []string {
 	result := []string{}
 	str := ""
-	antName := strconv.Itoa(n)
+	antName := strconv.Itoa(nameOfAnt)
 	for _, room := range paths {
 		str = "L" + antName + "-" + room
 		result = append(result, str)
@@ -268,36 +268,51 @@ func MoveAnts(n int, paths []string) []string {
 	return result
 }
 
-func Max(path [][][]string) int {
+//LenofMoves is the function that cacluates the exact
+//number of line it will take to print the movements of the ants downward.
+//For example, the container [][][]string contains the slices below.
+//  [[[L1-2 L1-3 L1-1] [L2-2 L2-3 L2-1] [L3-2 L3-3 L3-1] [L4-2 L4-3 L4-1]]]
+//The container contains one path so the maxlen will be len of the container[0] to get the number of ants inside that path
+//and the lenOfMove will be the len of the container[0][0] to get the number of moves of each ants in that path.
+func LenOfMoves(container [][][]string) int {
 	result := 0
-	maxlen := 0
+	maxLen := 0
 	pos := 0
-	if len(path) > 1 {
-		for i := range path {
-			for j := range path {
-				if len(path[i]) < len(path[j]) {
-					maxlen = len(path[j])
+	if len(container) > 1 {
+		for i := range container {
+			for j := range container {
+				if len(container[i]) < len(container[j]) {
+					maxLen = len(container[j])
 					pos = j
 				}
 			}
 		}
 	} else {
-		maxlen = len(path[0])
+		maxLen = len(container[0]) //assign to the first path if the number of path in the container is one
 	}
-
-	lenOfP := len(path[pos][0])
-	result = (maxlen - 1) + (lenOfP)
+	lenOfMove := len(container[pos][0])
+	//the number of ants in the path - 1 + the len of ants movemnts in that path
+	//will give you the exact amount of line to print it downwards
+	result = (maxLen - 1) + (lenOfMove)
 	return result
 }
 
-//PrintAntsMoves prints out the moving ants
-func PrintAntsMoves(container [][][]string, n int) string {
+//PrintAntsMoves is the function that print the ants movements
+//This will receives [][][]string that contains the movement of that ants and print it downwards
+//for example, the container [][][]string contains
+//  [[[L1-2 L1-3 L1-1] [L2-2 L2-3 L2-1] [L3-2 L3-3 L3-1] [L4-2 L4-3 L4-1]]]
+//it will be converted to the result below.
+//  L1-3 L2-2
+//  L1-1 L2-3 L3-2
+//  L2-1 L3-3 L4-2
+//  L3-1 L4-3
+//  L4-1
+func PrintAntsMoves(container [][][]string, lenofMoves int) string {
 	result := ""
-	antsMoves := make([][]string, n)
+	antsMoves := make([][]string, lenofMoves)
 	for _, c := range container {
 		for j, paths := range c {
 			for k, p := range paths {
-				// fmt.Println([]string{p}, i, j, j+k)
 				antsMoves[j+k] = append(antsMoves[j+k], p)
 			}
 		}
@@ -310,7 +325,6 @@ func PrintAntsMoves(container [][][]string, n int) string {
 	}
 	return result
 }
-
 
 //PathsSeletion pick the correct amount of paths and the correct amount of ants for each paths
 func PathsSeletion(nAnts int, pahts [][]string) [][][]string {
@@ -326,14 +340,14 @@ func PathsSeletion(nAnts int, pahts [][]string) [][][]string {
 			x := len(pahts[cnt]) + len(container[cnt])
 			y := len(pahts[cnt+1]) + len(container[cnt+1])
 			if !(x > y) {
-				container[cnt] = append(container[cnt], MoveAnts(i, pahts[cnt][1:]))
+				container[cnt] = append(container[cnt], MoveOfAnts(i, pahts[cnt][1:]))
 			} else {
 				if cnt == len(pahts)-1 {
 					cnt = 0
-					container[0] = append(container[0], MoveAnts(i, pahts[0][1:]))
+					container[0] = append(container[0], MoveOfAnts(i, pahts[0][1:]))
 				} else {
 					cnt++
-					container[cnt] = append(container[cnt], MoveAnts(i, pahts[cnt][1:]))
+					container[cnt] = append(container[cnt], MoveOfAnts(i, pahts[cnt][1:]))
 				}
 			}
 			i++
@@ -341,13 +355,12 @@ func PathsSeletion(nAnts int, pahts [][]string) [][][]string {
 	} else {
 		i := 1
 		for i != nAnts+1 {
-			container[0] = append(container[0], MoveAnts(i, pahts[0][1:]))
+			container[0] = append(container[0], MoveOfAnts(i, pahts[0][1:]))
 			i++
 		}
 	}
 	return container
 }
-
 
 func main() {
 	FilePath := os.Args[1]
@@ -358,14 +371,14 @@ func main() {
 		fmt.Println(file[0]) //error message
 		return
 	}
-	FarmInfo := function.CleanData(file) //assign the
-	lemin := NewGraph()                  //init lemin as a empty graph
-	lemin.Populate(FarmInfo)             // populate the lemin using the Populate method
+	FarmInfo := function.CleanData(file)
+	lemin := NewGraph()      //init lemin as a empty graph
+	lemin.Populate(FarmInfo) // populate the lemin using the Populate method
 	// lemin.PrintGraph()
-	AntsPaths := lemin.PathList(FarmInfo.Start, FarmInfo.End, true)
+	AntsPaths1 := lemin.PathList(FarmInfo.Start, FarmInfo.End, true)
 	lemin.MakeVisited(FarmInfo.Start, FarmInfo.End, lemin.RoomNameList(), false)
 	AntsPaths2 := lemin.PathList(FarmInfo.Start, FarmInfo.End, false)
-	a := ComparePaths(AntsPaths, AntsPaths2)
+	a := ComparePaths(AntsPaths1, AntsPaths2)
 	if len(a) == 0 {
 		fmt.Println("ERROR: invalid data format, no path found")
 		return
@@ -373,6 +386,5 @@ func main() {
 	fmt.Println(string(f))
 	fmt.Println()
 	container := PathsSeletion(FarmInfo.NumAnts, a)
-	fmt.Print(PrintAntsMoves(container, Max(container)))
-	// fmt.Print(MoveAnts(1, []string{"A0", "A1", "A2", "end"}))
+	fmt.Print(PrintAntsMoves(container, LenOfMoves(container)))
 }
