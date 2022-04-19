@@ -3,11 +3,11 @@ example00.txt [[0->2->3-1]] -> working
 example01.txt [[start->t->E->a->m->end][start->h->A->c->k->end][start->0->o->n->e->]] - working
 example02.txt [[0->1->2->3] [0->3]] -> working
 example03.txt [[0->1->4->5]] -> working
-example04.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> not working
-example05.txt [[start -> A0 -> A1 -> A2 -> end] [start -> B0 -> B1 -> E2 -> D2 -> F3 -> F4] [start -> G0 -> G1 -> G2 -> G3 -> G4 -> D3 -> end] [start -> C0 -> C1 -> C2 -> C3 -> I4 -> I5 -> end]] -> not working
-example06.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> not working
-example07.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> not working
-example08.txt [[1 -> 2 -> 4 -> 0][1 -> 3 -> 5 -> 6 ->0]] -> not working 
+example04.txt [[richard -> gilfoyle -> peter] [richard -> erlich -> jimYoung -> peter]] -> working
+example05.txt [[start -> A0 -> A1 -> A2 -> end] [start -> B0 -> B1 -> E2 -> D2 -> D3 -> end] [start -> C0 -> C1 -> C2 -> C3 -> I4 -> I5 -> end]] -> working
+example06.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> working
+example07.txt [[richard -> gilfoyle -> peter] [richard -> dinish -> jimYoung -> peter]] -> working
+example08.txt [[1 -> 2 -> 4 -> 0][1 -> 3 -> 5 -> 6 ->0]] -> working 
 badexample00.txt -> ERROR: invalid data format, invalid number of Ants
 badexample01.txt -> ERROR: invalid data format, no path found
 badexample02.txt -> ERROR: invalid data format, no end room found

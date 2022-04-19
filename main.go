@@ -198,8 +198,8 @@ func (g *Graph) PathList(start, end string, swtch bool) [][]string {
 	for cnt != len(g.Rooms[start].Links) {
 		path = g.FindPath(start, end, p, swtch) //look for the path
 		pathArr2 = function.SortStringPaths(pathArr2)
-		if len(pathArr2) > 1{
-		path = function.ConvertToArray(pathArr2[len(pathArr2)-1])
+		if len(pathArr2) > 1 {
+			path = function.ConvertToArray(pathArr2[len(pathArr2)-1])
 		}
 		pathArr2 = []string{}
 		if len(path) != 0 {
