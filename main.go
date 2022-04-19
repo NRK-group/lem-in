@@ -122,8 +122,6 @@ func (g *Graph) MakeVisited(start, end string, path Array, make bool) {
 //Initialize a global slice to create a method into slice.
 type Array []string
 
-type DArray [][]string
-
 //HasPropertyOf is a method of Array that loops through the slice and
 //check if the slice contains the specific string.
 //It will receice a string parameter and retrn true if the slice contains the string and
